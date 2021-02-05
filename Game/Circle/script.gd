@@ -12,7 +12,7 @@ var rand_value: int = OS.get_ticks_msec()
 # var a = 2
 # var b = "text"
 
-var radius_start: float = 150.0
+var radius_start: float = 80.0
 var radius_end: float = 50.0
 
 var _radius: float = radius_start
