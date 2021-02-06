@@ -7,6 +7,8 @@ onready var excellent_radius: float = 55.0
 onready var ok_radius: float = 60.0
 onready var bad_raduis: float = 70.0
 
+var circle_hovered: bool = false
+
 var time_start: int = 0
 var time_end: int = 5
 
@@ -21,8 +23,12 @@ var radius_end: float = 50.0
 
 var _radius: float = radius_start
 
-var _clicked: bool = false
+var _clicked: bool = false 
 
+
+func radius() -> float:
+	return _radius
+	
 func draw_circle_arc(center, radius, angle_from, angle_to, color):
 	var nb_points = 64
 	var points_arc = PoolVector2Array()
@@ -47,34 +53,41 @@ func draw_circle_arc_poly(center, radius, angle_from, angle_to, color):
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	pass # Replace with function body.
+	_radius = radius_start
+
+func on_mouse_overlap():
+	circle_hovered = true
+	
+func on_mouse_exited():
+	circle_hovered = false
 
 func _input(event):
-	if event is InputEventMouseButton:
-		if event.button_index == BUTTON_LEFT and event.pressed:
-			if _radius <= excellent_radius:
-				draw_string(global.font_string_debug, start_position, "300")
-				global.score += 300
-				global.excellent +=1
-				_clicked = true
-				queue_free()
-				return
-			elif _radius <= ok_radius:
-				draw_string(global.font_string_debug, start_position, "100")
-				global.score += 100
-				global.ok +=1
-				_clicked = true
-				queue_free()
-				return
-			elif _radius <= bad_raduis:
-				draw_string(global.font_string_debug, start_position, "50")
-				global.score += 50
-				global.bad +=1
-				_clicked = true
-				queue_free()
-				return
-			else:
-				print("too early")
+	if circle_hovered:
+		if event is InputEventMouseButton:
+			if event.button_index == BUTTON_LEFT and event.pressed:
+				if _radius <= excellent_radius:
+					draw_string(global.font_string_debug, start_position, "300")
+					global.score += 300
+					global.excellent +=1
+					_clicked = true
+					queue_free()
+					return
+				elif _radius <= ok_radius:
+					draw_string(global.font_string_debug, start_position, "100")
+					global.score += 100
+					global.ok +=1
+					_clicked = true
+					queue_free()
+					return
+				elif _radius <= bad_raduis:
+					draw_string(global.font_string_debug, start_position, "50")
+					global.score += 50
+					global.bad +=1
+					_clicked = true
+					queue_free()
+					return
+				else:
+					print("too early")
 				
 func _draw():
 	draw_circle_arc(start_position, _radius, 0, 360, Color.red)
@@ -85,6 +98,8 @@ func _draw():
 		draw_string(global.font_string_debug, Vector2(start_position.x, start_position.y+20), "%ds" % [(time_end - OS.get_ticks_msec())/1000 + 1])
 	
 func _process(_delta):
+	var collision: CollisionShape2D = get_node("Area2D/CollisionShape2D")
+	collision.shape.set_radius(_radius)
 	update()
 
 func update_circle():
@@ -99,3 +114,11 @@ func update_circle():
 	var k_speed = d_radius / dt 
 	var t_radius = k_speed * cur_time # OS.get_ticks_msec()
 	_radius = radius_start - t_radius
+
+
+func _on_Area2D_mouse_entered():
+	circle_hovered = true
+
+
+func _on_Area2D_mouse_exited():
+	circle_hovered = false

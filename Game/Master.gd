@@ -18,7 +18,6 @@ onready var circles_at_all: int = rng.randi_range(0, 100)
 func _ready():
 	circle_node = get_node("Circles")
 	
-	
 
 var count = 0
 
@@ -31,15 +30,14 @@ func _process(delta):
 
 func _draw():
 	if global.debug_mode:
-		draw_string(global.font_string_debug, Vector2(5, 15), "Circles running: %d" % [circle_node.get_child_count()])	
-		draw_string(global.font_string_debug, Vector2(5, 30), "get tick ms: %d" %  OS.get_ticks_msec())
-		draw_string(global.font_string_debug, Vector2(5, 50), "FPS: %d" % Performance.get_monitor(Performance.TIME_FPS))
+		draw_string(global.font_string_debug, Vector2(5, 15), "get tick ms: %d" %  OS.get_ticks_msec())
+		draw_string(global.font_string_debug, Vector2(5, 30), "FPS: %d" % Performance.get_monitor(Performance.TIME_FPS))
 		
-		draw_string(global.font_string_debug, Vector2(5, 80), "Misses: %d" % global.misses)
-		draw_string(global.font_string_debug, Vector2(5, 110), "300: %d" % global.excellent)
-		draw_string(global.font_string_debug, Vector2(5, 140), "100: %d" % global.ok)
-		draw_string(global.font_string_debug, Vector2(5, 160), "50: %d" % global.bad)
-		draw_string(global.font_string_debug, Vector2(5, 190), "Score: %d" % global.score)
+		draw_string(global.font_string_debug, Vector2(5, 50), "Misses: %d" % global.misses)
+		draw_string(global.font_string_debug, Vector2(5, 70), "300: %d" % global.excellent)
+		draw_string(global.font_string_debug, Vector2(5, 100), "100: %d" % global.ok)
+		draw_string(global.font_string_debug, Vector2(5, 130), "50: %d" % global.bad)
+		draw_string(global.font_string_debug, Vector2(5, 160), "Score: %d" % global.score)
 
 func _on_SpawnerTimer_timeout():
 	var circle = circle_instance.instance()
