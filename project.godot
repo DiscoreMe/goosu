@@ -42,4 +42,5 @@ ui_tilde={
 
 [rendering]
 
+environment/default_clear_color=Color( 0.380392, 0.6, 0.976471, 1 )
 environment/default_environment="res://default_env.tres"
