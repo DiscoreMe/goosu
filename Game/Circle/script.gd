@@ -3,6 +3,10 @@ extends Node2D
 
 export var start_position: Vector2 = Vector2(0, 0)
 
+onready var excellent_radius: float = 55.0
+onready var ok_radius: float = 60.0
+onready var bad_raduis: float = 70.0
+
 var time_start: int = 0
 var time_end: int = 5
 
@@ -16,6 +20,8 @@ var radius_start: float = 80.0
 var radius_end: float = 50.0
 
 var _radius: float = radius_start
+
+var _clicked: bool = false
 
 func draw_circle_arc(center, radius, angle_from, angle_to, color):
 	var nb_points = 64
@@ -43,6 +49,33 @@ func draw_circle_arc_poly(center, radius, angle_from, angle_to, color):
 func _ready():
 	pass # Replace with function body.
 
+func _input(event):
+	if event is InputEventMouseButton:
+		if event.button_index == BUTTON_LEFT and event.pressed:
+			if _radius <= excellent_radius:
+				draw_string(global.font_string_debug, start_position, "300")
+				global.score += 300
+				global.excellent +=1
+				_clicked = true
+				queue_free()
+				return
+			elif _radius <= ok_radius:
+				draw_string(global.font_string_debug, start_position, "100")
+				global.score += 100
+				global.ok +=1
+				_clicked = true
+				queue_free()
+				return
+			elif _radius <= bad_raduis:
+				draw_string(global.font_string_debug, start_position, "50")
+				global.score += 50
+				global.bad +=1
+				_clicked = true
+				queue_free()
+				return
+			else:
+				print("too early")
+				
 func _draw():
 	draw_circle_arc(start_position, _radius, 0, 360, Color.red)
 	draw_circle_arc_poly(start_position, radius_end, 0, 360, Color.blue)
@@ -57,8 +90,9 @@ func _process(_delta):
 func update_circle():
 	if _radius <= radius_end:
 		print("[circle] destroy")
+		global.misses += 1
 		queue_free()
-
+		
 	var cur_time =  OS.get_ticks_msec() - time_start
 	var dt = time_end - time_start
 	var d_radius = radius_start - radius_end

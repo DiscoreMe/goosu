@@ -3,6 +3,7 @@
 [ext_resource path="res://Game/Master.gd" type="Script" id=2]
 
 [node name="Game" type="Node2D"]
+position = Vector2( -2, 0 )
 script = ExtResource( 2 )
 
 [node name="GameTimer" type="Timer" parent="."]
@@ -10,4 +11,9 @@ wait_time = 0.001
 autostart = true
 
 [node name="Circles" type="Node" parent="."]
+
+[node name="SpawnerTimer" type="Timer" parent="."]
+wait_time = 0.978
+autostart = true
 [connection signal="timeout" from="GameTimer" to="." method="_on_GameTimer_timeout"]
+[connection signal="timeout" from="SpawnerTimer" to="." method="_on_SpawnerTimer_timeout"]
