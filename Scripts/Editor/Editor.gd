@@ -17,6 +17,7 @@ func _ready():
 func _on_LineEdit_text_changed(new_text):
 	_game_time = int(new_text)
 	$Panel/MediaPlayer/Label2.text = str(_game_time)
+	_tiker.set_value(_get_slice_time())
 
 func _input(event):
 	if event is InputEventMouseButton:
@@ -32,7 +33,7 @@ func _process(_delta):
 		var mouse_position = get_global_mouse_position()
 		var pos_x = mouse_position.x - _media_player.margin_left
 		var end = $Panel/MediaPlayer.margin_right - $Panel/MediaPlayer.margin_left
-		var val = pos_x * _game_time / end
+		var val = _get_slice_time()
 		if pos_x < 0.0:
 			pos_x = 0.0
 			_is_ticker_moving = false
@@ -44,7 +45,13 @@ func _process(_delta):
 		_tiker.set_value(val)
 		
 		#print("end=", end, " u=", u, " val=", val, " pos_x=", pos_x, " d(pos_x,end)=", end-pos_x)
-		
+
+func _get_slice_time() -> float:
+	var tiker_position = _tiker.position
+	var mouse_position = get_global_mouse_position()
+	var pos_x = mouse_position.x - _media_player.margin_left
+	var end = $Panel/MediaPlayer.margin_right - $Panel/MediaPlayer.margin_left
+	return pos_x * _game_time / end
 
 func _on_Tiker_mouse_entered():
 	_is_tiker_entered = true
