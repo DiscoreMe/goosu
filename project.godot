@@ -28,6 +28,10 @@ config/icon="res://icon.png"
 
 global="*res://Scripts/Global.gd"
 
+[display]
+
+window/vsync/use_vsync=false
+
 [gdnative]
 
 singletons=[ "res://git_api.gdnlib" ]

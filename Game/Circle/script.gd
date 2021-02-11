@@ -3,6 +3,12 @@ extends Node2D
 
 export var start_position: Vector2 = Vector2(0, 0)
 
+onready var excellent_radius: float = 55.0
+onready var ok_radius: float = 60.0
+onready var bad_radius: float = 70.0
+
+var circle_hovered: bool = false
+
 var time_start: int = 0
 var time_end: int = 5
 
@@ -17,6 +23,15 @@ var radius_end: float = 50.0
 
 var _radius: float = radius_start
 
+var _clicked: bool = false 
+
+var Master: Node2D
+
+var CollShape: CollisionShape2D
+
+func radius() -> float:
+	return _radius
+	
 func draw_circle_arc(center, radius, angle_from, angle_to, color):
 	var nb_points = 64
 	var points_arc = PoolVector2Array()
@@ -41,8 +56,35 @@ func draw_circle_arc_poly(center, radius, angle_from, angle_to, color):
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	pass # Replace with function body.
+	Master = get_parent().get_parent()
+	CollShape = get_node("Area2D/CollisionShape2D")
+	CollShape.shape.set_radius(radius_start)
+	_radius = radius_start
 
+func on_mouse_overlap():
+	circle_hovered = true
+	
+func on_mouse_exited():
+	circle_hovered = false
+
+func _input(event):
+	if event is InputEventMouseButton:
+		if event.button_index == BUTTON_LEFT and event.pressed:
+			if _radius <= excellent_radius:
+				draw_string(global.font_string_debug, start_position, "300")
+				Master.consider_hit("excellent")
+				queue_free()
+			elif _radius <= ok_radius:
+				draw_string(global.font_string_debug, start_position, "100")
+				Master.consider_hit("ok")
+				queue_free()
+			elif _radius <= bad_radius:
+				draw_string(global.font_string_debug, start_position, "50")
+				Master.consider_hit("bad")
+				queue_free()
+			else:
+				print("too early")
+				
 func _draw():
 	draw_circle_arc(start_position, _radius, 0, 360, Color.red)
 	draw_circle_arc_poly(start_position, radius_end, 0, 360, Color.blue)
@@ -52,16 +94,26 @@ func _draw():
 		draw_string(global.font_string_debug, Vector2(start_position.x, start_position.y+20), "%ds" % [(time_end - OS.get_ticks_msec())/1000 + 1])
 	
 func _process(_delta):
+	CollShape.shape.set_radius(_radius)
 	update()
 
 func update_circle():
 	if _radius <= radius_end:
 		print("[circle] destroy")
+		Master.consider_hit("miss")
 		queue_free()
-
+		
 	var cur_time =  OS.get_ticks_msec() - time_start
 	var dt = time_end - time_start
 	var d_radius = radius_start - radius_end
 	var k_speed = d_radius / dt 
 	var t_radius = k_speed * cur_time # OS.get_ticks_msec()
 	_radius = radius_start - t_radius
+
+
+func _on_Area2D_mouse_entered():
+	circle_hovered = true
+
+
+func _on_Area2D_mouse_exited():
+	circle_hovered = false
